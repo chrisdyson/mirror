@@ -151,7 +151,6 @@
                 }
             }
 
-
             function sendMail(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
@@ -180,7 +179,6 @@
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
                 }            
             }
-            
             
             function sendWeather(data) {
                 var app = data.result.parameters.app.toLowerCase();
@@ -225,6 +223,7 @@
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;  
             }
+            
             recognition.start();
         </script>
         <style type="text/css">
