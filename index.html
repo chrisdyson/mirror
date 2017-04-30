@@ -1,4 +1,3 @@
-//Commit
 <!DOCTYPE html>
 <html>
     <head>
@@ -89,6 +88,8 @@
                                 sendMap(data);
                             case "news":
                                 sendNews(data);
+                            case "calculator":
+                                sendCalculator(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -228,7 +229,8 @@
                 var action = data.result.action;
                 var number = data.result.parameters.number;
                 var number1 = data.result.parameters.number1;
-                if(numer == "" && number1 == "") {
+                var calculation = data.result.parameters.calculation;
+                if(number == "" && number1 == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}]});
                 }
             } 
