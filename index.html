@@ -86,6 +86,8 @@
                                 sendMail(data);
                             case "map":
                                 sendMap(data);
+                            case "news":
+                                sendNews(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -230,7 +232,24 @@
                 }
             } 
             
-            
+            function sendNews(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var source = data.result.source;
+                
+                if (action == "addNews") {
+                    if (source != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "add", "value": source}]});
+                    }
+                } 
+                else if (action == "showNews") {
+                    if (source == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
+                    } else if (source != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": source}]});
+                    }
+                }
+            }
             recognition.start();
         </script>
         <style type="text/css">
