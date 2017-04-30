@@ -227,19 +227,15 @@
                 var source = data.result.source;
                 
                 if (action == "addNews") {
-                    if (repeat == "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}]});
-                    } else if (date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "repeat", "value": repeat}]});
-                    } else if (repeat == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
+                    if (source != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "add", "value": source}]});
                     }
                 } 
                 else if (action == "showNews") {
                     if (source == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
                     } else if (source != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": source}]});
                     }
                 }
             }
