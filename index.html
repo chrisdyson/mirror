@@ -230,8 +230,8 @@
                 var number = data.result.parameters.number;
                 var number1 = data.result.parameters.number1;
                 var calculation = data.result.parameters.calculation;
-                if(number == "" && number1 == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}]});
+                if(number != "" && number1 != "" && calculation != "") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}, {name: "calculation", "value": calculation}]});
                 }
             } 
             
