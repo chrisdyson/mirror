@@ -98,6 +98,8 @@
                                 sendList(data);
                             case "note":
                                 sendNote(data);
+                            case "music":
+                                sendMusic(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -398,20 +400,6 @@
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
                     }
                     
-                }
-                else if (action == "shuffleMusic") {
-                    if(artist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
-                    }
-                    else if(genre != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
-                    }
-                    else if(album != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
-                    }
-                    else if(playlist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
-                    }
                 }
                 else if (action == "pauseMusic") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
