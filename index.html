@@ -94,6 +94,10 @@
                                 sendClock(data);
                             case "motd":
                                 sendMOTD(data);
+                            case "list":
+                                sendList(data);
+                            case "note":
+                                sendNote(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -272,7 +276,78 @@
                 var action = data.result.action;
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
             } 
-                                                                                 
+             
+            function sendList(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var name = data.result.parameters.name;
+                var item = data.result.parameters.item;
+                
+                if (action == "addList") {
+                    if (item != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item},{name: "name", "value": name}]});
+                    }
+                } 
+                else if (action == "createList") {
+                    if (name != "" && item == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                    } else if (item != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "item", "value": item}]});
+                    }
+                }
+                else if (action == "deleteList") {
+                    if (name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "delete", "name": "name"}]});
+                    }
+                }
+                else if (action == "removeList") {
+                    if (item != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item},{name: "name", "value": name}]});
+                    }
+                }
+                else if (action == "showList") {
+                    if (name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "name": "name"}]});
+                    }
+                }
+            }
+             
+            function sendNote(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var name = data.result.parameters.name;
+                var text = data.result.parameters.item;
+                var number = data.result.parameters.number;
+                
+                if (action == "addNote") {
+                    if (text != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "name", "value": name}]});
+                    }
+                } 
+                else if (action == "createNote") {
+                    if (name != "" && text == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                    } else if (text != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "text", "value": text}]});
+                    }
+                }
+                else if (action == "deleteNote") {
+                    if (name != "" && number == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                    } else if (name == "" && number != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
+                    }
+                }
+                else if (action == "removeNote") {
+                    if (text != "" && name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "name", "value": name}]});
+                    }
+                }
+                else if (action == "showNote") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "name": "All"}]});
+                }
+            }            
+            
             recognition.start();
         </script>
         <style type="text/css">
