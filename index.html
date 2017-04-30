@@ -86,8 +86,8 @@
                                 sendMail(data);
                             case "map":
                                 sendMap(data);
-                            case "stuff":
-                                sendStuff(data);
+                            case "news":
+                                sendNews(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -118,13 +118,15 @@
                     } else if (repeat == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
                     }
-                } else if (action == "editAlarm") {
+                } 
+                else if (action == "editAlarm") {
                     if (date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}]});
                     } else {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
                     }
-                } else if (action == "showAlarm") {
+                } 
+                else if (action == "showAlarm") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
                 } else if (action == "deleteAlarm") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
@@ -219,9 +221,27 @@
                 } 
             }
             
-            function sendStuff(data) {
+            function sendNews(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action;  
+                var action = data.result.action; 
+                var source = data.result.source;
+                
+                if (action == "addNews") {
+                    if (repeat == "" && date == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}]});
+                    } else if (date == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "repeat", "value": repeat}]});
+                    } else if (repeat == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
+                    }
+                } 
+                else if (action == "showNews") {
+                    if (source == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
+                    } else if (source != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
+                    }
+                }
             }
             
             recognition.start();
