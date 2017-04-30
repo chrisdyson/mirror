@@ -153,8 +153,6 @@
                 }
             }
             
-
-
             function sendMail(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
@@ -183,7 +181,6 @@
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
                 }            
             }
-            
             
             function sendWeather(data) {
                 var app = data.result.parameters.app.toLowerCase();
@@ -253,6 +250,7 @@
                     }
                 }
             }
+            
             recognition.start();
         </script>
         <style type="text/css">
@@ -278,7 +276,7 @@
                 text-align: center;
             }
             textarea {
-                background-color: #000;
+                background-color: #fff;
                 border: 1px #8c8c8c solid;
                 height: 750px;
                 width: calc(100% - 25px);
