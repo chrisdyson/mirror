@@ -90,6 +90,10 @@
                                 sendNews(data);
                             case "calculator":
                                 sendCalculator(data);
+                            case "clock":
+                                sendClock(data);
+                            case "motd":
+                                sendMOTD(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -259,9 +263,16 @@
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": "Time"}]});
                 }
                 else if(city != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "city", "value": city]});
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "city", "value": city}]});
                 }
             } 
+                                                                                 
+            function sendMOTD(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action;
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
+            } 
+                                                                                 
             recognition.start();
         </script>
         <style type="text/css">
