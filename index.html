@@ -235,7 +235,7 @@
             function sendNews(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action; 
-                var source = data.result.source;
+                var source = data.result.parameters.source;
                 
                 if (action == "addNews") {
                     if (source != "") {
@@ -248,6 +248,76 @@
                     } else if (source != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": source}]});
                     }
+                }
+            }
+            
+            function sendMusic(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var artist = data.result.parameters.artist;
+                var genre = data.result.parameters.genre;
+                var album = data.result.parameters.album;
+                var song = data.result.parameters.song;
+                var playlist = data.result.parameters.playlist;
+                if (action == "play") {
+                    if (album != "" && artist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}, {name: "artist", "value": artist}]});
+                    }
+                    else if (genre != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                    } else if (artist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    }
+                    
+                }
+                else if (action == "nextMusic") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "next"}]});
+                }
+                else if (action == "previousMusic") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "previous"}]});
+                }
+                else if (action == "loopMusic") {
+                        if (song != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "song", "value": song}]});
+                        }
+                        else if(album != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                        }
+                        else if(artist != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                        }
+                }
+                else if (action == "shuffleMusic") {
+                    if(artist != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    }
+                    else if (genre != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                    }
+                    else if(album != "") {
+                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                    }
+                    else if(playlist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
+                    }
+                    
+                }
+                else if (action == "shuffleMusic") {
+                    if(artist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    }
+                    else if(genre != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                    }
+                    else if(album != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                    }
+                    else if(playlist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
+                    }
+                }
+                else if (action == "pauseMusic") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
                 }
             }
             
