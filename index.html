@@ -86,8 +86,6 @@
                                 sendMail(data);
                             case "map":
                                 sendMap(data);
-                            case "news":
-                                sendNews(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -118,15 +116,13 @@
                     } else if (repeat == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
                     }
-                } 
-                else if (action == "editAlarm") {
+                } else if (action == "editAlarm") {
                     if (date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}]});
                     } else {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
                     }
-                } 
-                else if (action == "showAlarm") {
+                } else if (action == "showAlarm") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
                 } else if (action == "deleteAlarm") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
@@ -152,6 +148,8 @@
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": period}]});
                 }
             }
+            
+
 
             function sendMail(data) {
                 var app = data.result.parameters.app.toLowerCase();
@@ -181,6 +179,7 @@
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
                 }            
             }
+            
             
             function sendWeather(data) {
                 var app = data.result.parameters.app.toLowerCase();
@@ -221,24 +220,16 @@
                 } 
             }
             
-            function sendNews(data) {
+            function sendCalculator(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
-                var source = data.result.source;
-                
-                if (action == "addNews") {
-                    if (source != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "add", "value": source}]});
-                    }
-                } 
-                else if (action == "showNews") {
-                    if (source == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
-                    } else if (source != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": source}]});
-                    }
+                var action = data.result.action;
+                var number = data.result.parameters.number;
+                var number1 = data.result.parameters.number1;
+                if(numer == "" && number1 == "") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}]});
                 }
-            }
+            } 
+            
             
             recognition.start();
         </script>
