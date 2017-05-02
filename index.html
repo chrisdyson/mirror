@@ -364,8 +364,12 @@
                     }
                     else if (genre != "") {
                             $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
-                    } else if (artist != "") {
+                    } 
+                    else if (artist != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    } 
+                    else if(artist != "" && genre != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "play"}]});
                     }
                     
                 }
@@ -404,6 +408,37 @@
                 else if (action == "pauseMusic") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
                 }
+            }
+            
+            function sendTimer(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var duration = data.result.parameters.duration;
+                if(action == "setTimer") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "duration", "value": duration}]});
+                }
+                else if(action == "pauseTimer") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
+                }
+                else if(action == "stopTimer") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "stop"}]});
+                } 
+            }
+            
+            function sendVolume(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var percentage = data.result.parameters.percentage;
+                var volume = data.result.parameters.volume;
+                if(action == "editVolume") {
+                    if(percentage != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "percentage", "value": percentage}]});                        
+                    }
+                    else if(volume != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "volume", "value": volume}]});
+                    }
+                }
+                
             }
             
             recognition.start();
