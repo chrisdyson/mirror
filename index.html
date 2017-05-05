@@ -100,6 +100,14 @@
                                 sendNote(data);
                             case "music":
                                 sendMusic(data);
+                            case "timer":
+                                sendTimer(data);
+                            case "volume":
+                                sendVolume(data);
+                            case "converter":
+                                sendConverter(data);
+                            case "translate":
+                                sendTranslate(data);
                         }
                         setResponse(JSON.stringify(data, undefined, 2));
                     },
@@ -214,21 +222,48 @@
             function sendMap(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
+                var userLocation = data.result.parameters.name;
                 var city = data.result.parameters.city;
                 var country = data.result.parameters.country;
                 var continent = data.result.parameters.continent;
-                if (city == "" && country == "" && continent == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
-                } 
-                else if (city != "" && country == "" && continent == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
-                } 
-                else if (city == "" && country != "" && continent == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
-                } 
-                else if (city == "" && country == "" && continent != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": continent}]});
-                } 
+                var geocity = data.result.parameters.geocity;
+                var geocity1 = data.result.parameters.geocity1;
+                if (action == "setMap") {
+                    if (geocity != "" && geocity1 == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}]});
+                    } 
+                    else if (geocity != "" && geocity1 != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity},{name: "distanceFrom", "value": geocity1}]});
+                    } 
+                }
+                if (action == "showMap") {
+                    if (city == "" && country == "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
+                    } 
+                    else if (city != "" && country == "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
+                    } 
+                    else if (city == "" && country != "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
+                    } 
+                    else if (city == "" && country == "" && continent != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": continent}]});
+                    } 
+                }
+                if (action == "distanceMap") {
+                    if (city == "" && country == "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
+                    } 
+                    else if (city != "" && country == "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
+                    } 
+                    else if (city == "" && country != "" && continent == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
+                    } 
+                    else if (city == "" && country == "" && continent != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": continent}]});
+                    } 
+                }
             }
             
             function sendCalculator(data) {
@@ -284,6 +319,7 @@
                 var action = data.result.action; 
                 var name = data.result.parameters.name;
                 var item = data.result.parameters.item;
+                var date = data.result.parameters.date;
                 
                 if (action == "addList") {
                     if (item != "" && name != "") {
@@ -291,10 +327,12 @@
                     }
                 } 
                 else if (action == "createList") {
-                    if (name != "" && item == "") {
+                    if (name != "" && item == "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
-                    } else if (item != "" && name != "") {
+                    } else if (item != "" && name != "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "item", "value": item}]});
+                    } else if (item != "" && date != "" name == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date},{name: "item", "value": item}]});
                     }
                 }
                 else if (action == "deleteList") {
@@ -320,6 +358,7 @@
                 var name = data.result.parameters.name;
                 var text = data.result.parameters.item;
                 var number = data.result.parameters.number;
+                var date = data.result.parameters.date;
                 
                 if (action == "addNote") {
                     if (text != "" && name != "") {
@@ -327,10 +366,14 @@
                     }
                 } 
                 else if (action == "createNote") {
-                    if (name != "" && text == "") {
+                    if (name != "" && text == "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
-                    } else if (text != "" && name != "") {
+                    } 
+                    else if (text != "" && name != "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "text", "value": text}]});
+                    }
+                    else if (text != "" && date != "" && name == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date},{name: "text", "value": text}]});
                     }
                 }
                 else if (action == "deleteNote") {
@@ -438,7 +481,36 @@
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "volume", "value": volume}]});
                     }
                 }
-                
+            }
+            
+            function sendConverter(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var number = data.result.parameters.number;
+                var unitFrom = data.result.parameters.unitFrom;
+                var unitTo = data.result.parameters.unitTo;
+                if(action == "doConverter") {
+                    if(number != "" && unitFrom != "" && unitTo != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number},{name: "unitFrom", "value": unitFrom},{name: "unitTo", "value": unitTo}]});                        
+                    }
+                }
+                if(action == "showConverter") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": app}]});                        
+                    
+                }
+            }
+ 
+            function sendTranslate(data) {
+                var app = data.result.parameters.app.toLowerCase();
+                var action = data.result.action; 
+                var text = data.result.parameters.text;
+                var langFrom = data.result.parameters.languageFrom;
+                var langTo = data.result.parameters.languageTo;
+                if(action == "doTranslate") {
+                    if(number != "" && langFrom != "" && langTo != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "langFrom", "value": langFrom},{name: "langTo", "value": langTo}]});                        
+                    }
+                }
             }
             
             recognition.start();
