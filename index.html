@@ -331,7 +331,7 @@
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (item != "" && name != "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "item", "value": item}]});
-                    } else if (item != "" && date != "" name == "") {
+                    } else if (item != "" && date != "" && name == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date},{name: "item", "value": item}]});
                     }
                 }
