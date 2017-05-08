@@ -206,15 +206,19 @@
                 var location = data.result.parameters.location;
                 var date = data.result.parameters.date;
                 var period = data.result.parameters.period;
-                if (date != "" && location != "") {
+                if (date != "" && location != "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "date", "value": date}]});
-                } else if (period != "" && location != "") {
+                } 
+                else if (period != "" && location != "" && date == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "period", "value": period}]});
-                } else if (location != "") {
+                } 
+                else if (location != "" && date == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}]});
-                } else if (date != "") {
+                } 
+                else if (date != "" && location == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
-                } else if (period != "") {
+                } 
+                else if (period != "" && date == "" && location == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "period", "value": period}]});
                 }
             }
@@ -337,7 +341,7 @@
                 }
                 else if (action == "deleteList") {
                     if (name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "delete", "name": "name"}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "delete", "value": name}]});
                     }
                 }
                 else if (action == "removeList") {
@@ -347,7 +351,7 @@
                 }
                 else if (action == "showList") {
                     if (name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "name": "name"}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": name}]});
                     }
                 }
             }
