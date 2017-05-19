@@ -2,40 +2,51 @@
 <html>
     <head>
         <title>smartMirror</title>
+        <!-- Include Jquery library -->
         <script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
         <script type="text/javascript">
             if (!('webkitSpeechRecognition' in window)) {
+                //If webkit speechrecognition not on device, show alert, won't initialize anything
                 alert("Speech API not supported here");
             } else {
+                //If webkit speechrecognition is on device, initialize the recognition js, set variables
                 var recognition = new webkitSpeechRecognition();
-                recognition.continuous = false;
+                recognition.continuous = false; //To send JSON once user has said command
                 recognition.interimResults = true;
                 recognition.lang = "en-GB";
             }
-
+            
+            //Functions to run on page load/ start of speech recognition
             recognition.onstart = function () {
             }
-
+                
+            //Functions to run when speech recognition ends
             recognition.onend = function () {
+                //Keeps continuous listening
                 recognition.start();
             }
-
+            
+            //Starts speech recognition
             recognition.start();
+            
+            //Functions whilst user is talking, has finished talking
             recognition.onresult = function (event) {
-
                 if (typeof (event.results) === 'undefined') {
                     recognition.stop();
                     return;
+                    //Error
                 }
 
+                //Speech result
                 for (var i = event.resultIndex; i < event.results.length; ++i) {
                     var output = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
+                        //User has finished talking
                         var m = output.includes("mirror mirror");
+                        //Checks dictated text has 'Mirror mirror' in
                         if (mirrorMirrorBeenSaid == true) {
                             $("#input").text(output);
-							$("marquee").css('visibility', 'hidden');
+                            $("marquee").css('visibility', 'hidden');
                             send();
                             mirrorMirrorBeenSaid = false;
                             setTimeout(function () {
@@ -43,13 +54,14 @@
                             }, 2000);
                         } else if (m == true) {
                             mirrorMirrorBeenSaid = true;
-                            $("#input").text("Listening..."); 
-							$("marquee").css('visibility', 'visible');
+                            $("#input").text("Listening...");
+                            $("marquee").css('visibility', 'visible');
                         } else {
                             $("#input").text("");
-							$("marquee").css('visibility', 'hidden');
+                            $("marquee").css('visibility', 'hidden');
                         }
                     } else {
+                        //During user talking
                         if (mirrorMirrorBeenSaid == true) {
                             $("#input").text(output);
                         }
@@ -58,10 +70,14 @@
             }
 
             var mirrorMirrorBeenSaid = false;
+            //mirror api URL
             var karlsruheURL = "http://de.macknet.eu:8000/fire-event";
+            
+            //api.ai api keys/ sending & getting data
             var accessToken = "951c47c9f31c467f8871e0723d8545a1";
             var baseUrl = "https://api.api.ai/v1/";
             function send() {
+                //Send dictated text to api.ai for analysis
                 var text = $("#input").text();
                 $.ajax({
                     type: "POST",
@@ -73,7 +89,9 @@
                     },
                     data: JSON.stringify({query: text, lang: "en", sessionId: "007"}),
                     success: function (data) {
+                        //Handle data (JSON) returned from api.ai
                         switch (data.result.parameters.app.toLowerCase()) {
+                                //Depending on app, depends on what function to call to send personalised JSON to mirror api
                             case "alarm":
                                 sendAlarm(data);
                                 break;
@@ -82,56 +100,69 @@
                                 break;
                             case "weather":
                                 sendWeather(data);
+								break
                             case "email":
                                 sendMail(data);
+								break
                             case "map":
                                 sendMap(data);
+								break
                             case "news":
                                 sendNews(data);
+								break
                             case "calculator":
                                 sendCalculator(data);
+								break
                             case "clock":
                                 sendClock(data);
+								break
                             case "motd":
                                 sendMOTD(data);
+								break
                             case "list":
                                 sendList(data);
+								break
                             case "note":
                                 sendNote(data);
+								break
                             case "music":
                                 sendMusic(data);
+								break
                             case "timer":
                                 sendTimer(data);
+								break
                             case "volume":
                                 sendVolume(data);
+								break
                             case "converter":
                                 sendConverter(data);
-                            case "translate":
+								break
+                            case "translator":
                                 sendTranslate(data);
+								break
                         }
-                        setResponse(JSON.stringify(data, undefined, 2));
                     },
                     error: function () {
-                        setResponse("Internal Server Error");
+                        alert("Error");
                     }
                 });
-                setResponse("Working on it...");
             }
-            function setResponse(val) {
-                $("#response").text(val);
-
-            }
-
+			
+            //Function handles all things from alarm
             function sendAlarm(data) {
+                //Save necessary JSON data from api.ai to variables
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
                 var time = data.result.parameters.time;
                 var date = data.result.parameters.date;
                 var repeat = data.result.parameters.repeat;
                 var number = data.result.parameters.number;
-
+                
+                //Use else if function to determine which action/ alarm function being called
                 if (action == "addAlarm") {
+                    //Determine further which command is being called. Different commands will handle different data.
                     if (repeat == "" && date == "") {
+                        //Send data to mirror api in JSON form
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}]});
                     } else if (date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "repeat", "value": repeat}]});
@@ -159,18 +190,15 @@
                 var period = data.result.parameters.period;
                 if (month == "" && date == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "Calendar"}]});
-                } 
-                else if (month != "" && date == "" && period == "") {
+                } else if (month != "" && date == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": month}]});
-                }
-                else if (month == "" && date != "" && period == "") {
+                } else if (month == "" && date != "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": date}]});
-                }
-                else if (month == "" && date == "" && period != "") {
+                } else if (month == "" && date == "" && period != "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": period}]});
                 }
             }
-            
+
             function sendMail(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
@@ -179,46 +207,38 @@
                 var type = data.result.parameters.type;
                 var givenName = data.result.parameters.senderPerson;
                 var givenCompany = data.result.parameters.senderCompany;
-                
+
                 if (date == "" && period == "" && type == "" && givenName == "" && givenCompany == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}]});
-                }
-                else if (date != "" && period == "" && type == "" && givenName == "" && givenCompany == "") {
+                } else if (date != "" && period == "" && type == "" && givenName == "" && givenCompany == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "date", "value": date}]});
-                }
-                else if (date == "" && period != "" && type == "" && givenName == "" && givenCompany == "") {
+                } else if (date == "" && period != "" && type == "" && givenName == "" && givenCompany == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "period", "value": period}]});
-                }
-                else if (date == "" && period == "" && type != "" && givenName == "" && givenCompany == "") {
+                } else if (date == "" && period == "" && type != "" && givenName == "" && givenCompany == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "type", "value": type}]});
-                }
-                else if (date == "" && period == "" && type == "" && givenName != "" && givenCompany == "") {
+                } else if (date == "" && period == "" && type == "" && givenName != "" && givenCompany == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromPerson", "value": givenName}]});
-                }
-                else if (date == "" && period == "" && type == "" && givenName == "" && givenCompany != "") {
+                } else if (date == "" && period == "" && type == "" && givenName == "" && givenCompany != "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
-                }            
+                }
             }
-            
+
             function sendWeather(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
                 var location = data.result.parameters.location;
                 var date = data.result.parameters.date;
                 var period = data.result.parameters.period;
+
                 if (date != "" && location != "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "date", "value": date}]});
-                } 
-                else if (period != "" && location != "" && date == "") {
+                } else if (period != "" && location != "" && date == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "period", "value": period}]});
-                } 
-                else if (location != "" && date == "" && period == "") {
+                } else if (location != "" && date == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}]});
-                } 
-                else if (date != "" && location == "" && period == "") {
+                } else if (date != "" && location == "" && period == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
-                } 
-                else if (period != "" && date == "" && location == "") {
+                } else if (period != "" && date == "" && location == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "period", "value": period}]});
                 }
             }
@@ -232,66 +252,57 @@
                 var continent = data.result.parameters.continent;
                 var geocity = data.result.parameters.geocity;
                 var geocity1 = data.result.parameters.geocity1;
+				var name = data.result.parameters.name;
+				var address = data.result.parameters.address;
+				
                 if (action == "setMap") {
-                    if (geocity != "" && geocity1 == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}]});
-                    } 
-                    else if (geocity != "" && geocity1 != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity},{name: "distanceFrom", "value": geocity1}]});
-                    } 
+                    if (name != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": name}]});
+                    }
                 }
                 if (action == "showMap") {
-                    if (city == "" && country == "" && continent == "") {
+                    if (city == "" && country == "" && continent == "" && address == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
-                    } 
-                    else if (city != "" && country == "" && continent == "") {
+                    } else if (city != "" && country == "" && continent == "" && address == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
-                    } 
-                    else if (city == "" && country != "" && continent == "") {
+                    } else if (city == "" && country != "" && continent == "" && address == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
-                    } 
-                    else if (city == "" && country == "" && continent != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": continent}]});
-                    } 
+                    } else if (city == "" && country == "" && continent != "" && address == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": continent}]});
+                    } else if (address != "" && city == "" && country == "" && continent == "") {
+						$.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": address}]});
+					}
                 }
                 if (action == "distanceMap") {
-                    if (city == "" && country == "" && continent == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
-                    } 
-                    else if (city != "" && country == "" && continent == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
-                    } 
-                    else if (city == "" && country != "" && continent == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
-                    } 
-                    else if (city == "" && country == "" && continent != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": continent}]});
-                    } 
+					if (geocity != "" && geocity1 == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}]});
+                    } else if (geocity != "" && geocity1 != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}, {name: "distanceFrom", "value": geocity1}]});
+                    }
                 }
             }
-            
+
             function sendCalculator(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
                 var number = data.result.parameters.number;
                 var number1 = data.result.parameters.number1;
                 var calculation = data.result.parameters.calculation;
-                if(number != "" && number1 != "" && calculation != "") {
+                if (number != "" && number1 != "" && calculation != "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}, {name: "calculation", "value": calculation}]});
                 }
-            } 
-            
+            }
+
             function sendNews(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var source = data.result.parameters.source;
-                
+
                 if (action == "addNews") {
                     if (source != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "add", "value": source}]});
                     }
-                } 
-                else if (action == "showNews") {
+                } else if (action == "showNews") {
                     if (source == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
                     } else if (source != "") {
@@ -299,227 +310,204 @@
                     }
                 }
             }
-     
+
             function sendClock(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
                 var city = data.result.parameters.city;
-                if(city == "") {
+                if (city == "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": "Time"}]});
-                }
-                else if(city != "") {
+                } else if (city != "") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "city", "value": city}]});
                 }
-            } 
-                                                                                 
+            }
+
             function sendMOTD(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
-            } 
-             
+                $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
+            }
+
             function sendList(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var name = data.result.parameters.name;
                 var item = data.result.parameters.item;
                 var date = data.result.parameters.date;
-                
+
                 if (action == "addList") {
                     if (item != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item},{name: "name", "value": name}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
                     }
-                } 
-                else if (action == "createList") {
+                } else if (action == "createList") {
                     if (name != "" && item == "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (item != "" && name != "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "item", "value": item}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "item", "value": item}]});
                     } else if (item != "" && date != "" && name == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date},{name: "item", "value": item}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "item", "value": item}]});
                     }
-                }
-                else if (action == "deleteList") {
+                } else if (action == "deleteList") {
                     if (name != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "delete", "value": name}]});
                     }
-                }
-                else if (action == "removeList") {
+                } else if (action == "removeList") {
                     if (item != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item},{name: "name", "value": name}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
                     }
-                }
-                else if (action == "showList") {
+                } else if (action == "showList") {
                     if (name != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": name}]});
                     }
                 }
             }
-             
+
             function sendNote(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var name = data.result.parameters.name;
-                var text = data.result.parameters.item;
+                var text = data.result.parameters.text;
                 var number = data.result.parameters.number;
                 var date = data.result.parameters.date;
-                
+
                 if (action == "addNote") {
                     if (text != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "name", "value": name}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
                     }
-                } 
-                else if (action == "createNote") {
+                } else if (action == "createNote") {
                     if (name != "" && text == "" && date == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
-                    } 
-                    else if (text != "" && name != "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name},{name: "text", "value": text}]});
+                    } else if (text != "" && name != "" && date == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "text", "value": text}]});
+                    } else if (text != "" && date != "" && name == "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "text", "value": text}]});
                     }
-                    else if (text != "" && date != "" && name == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date},{name: "text", "value": text}]});
-                    }
-                }
-                else if (action == "deleteNote") {
+                } else if (action == "deleteNote") {
                     if (name != "" && number == "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (name == "" && number != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
                     }
-                }
-                else if (action == "removeNote") {
+                } else if (action == "removeNote") {
                     if (text != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "name", "value": name}]});
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
                     }
+                } else if (action == "showNote") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "All"}]});
                 }
-                else if (action == "showNote") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "name": "All"}]});
-                }
-            }            
-            
+            }
+
             function sendMusic(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var artist = data.result.parameters.artist;
                 var genre = data.result.parameters.genre;
                 var album = data.result.parameters.album;
                 var song = data.result.parameters.song;
                 var playlist = data.result.parameters.playlist;
-                if (action == "play") {
+                if (action == "playMusic") {
                     if (album != "" && artist != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}, {name: "artist", "value": artist}]});
-                    }
-                    else if (genre != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
-                    } 
-                    else if (artist != "") {
+                    } else if (genre != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                    } else if (artist != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
-                    } 
-                    else if(artist != "" && genre != "") {
+                    } else if (artist != "" && genre != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "play"}]});
                     }
-                    
-                }
-                else if (action == "nextMusic") {
+
+                } else if (action == "nextMusic") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "next"}]});
-                }
-                else if (action == "previousMusic") {
+                } else if (action == "previousMusic") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "previous"}]});
-                }
-                else if (action == "loopMusic") {
-                        if (song != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "song", "value": song}]});
-                        }
-                        else if(album != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
-                        }
-                        else if(artist != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
-                        }
-                }
-                else if (action == "shuffleMusic") {
-                    if(artist != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
-                    }
-                    else if (genre != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
-                    }
-                    else if(album != "") {
-                            $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
-                    }
-                    else if(playlist != "") {
+                } else if (action == "loopMusic") {
+                    if (song != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "song", "value": song}]});
+                    } else if (album != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                    } else if (artist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    } else if (playlist != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
                     }
-                    
-                }
-                else if (action == "pauseMusic") {
+                } else if (action == "shuffleMusic") {
+                    if (artist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                    } else if (genre != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                    } else if (album != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                    } else if (playlist != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
+                    }
+
+                } else if (action == "pauseMusic") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
                 }
             }
-            
+
             function sendTimer(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
-                var duration = data.result.parameters.duration;
-                if(action == "setTimer") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "duration", "value": duration}]});
-                }
-                else if(action == "pauseTimer") {
+                var action = data.result.action;
+                var unit = data.result.parameters.duration.unit;
+                var value = data.result.parameters.duration.amount;
+                if (action == "setTimer") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "duration", "value": value},{name: "unit", "value": unit}]});
+                } else if (action == "pauseTimer") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
-                }
-                else if(action == "stopTimer") {
+                } else if (action == "stopTimer") {
                     $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "stop"}]});
-                } 
+                }
             }
-            
+
             function sendVolume(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var percentage = data.result.parameters.percentage;
                 var volume = data.result.parameters.volume;
-                if(action == "editVolume") {
-                    if(percentage != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "percentage", "value": percentage}]});                        
-                    }
-                    else if(volume != "") {
+                if (action == "editVolume") {
+                    if (percentage != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "percentage", "value": percentage}]});
+                    } else if (volume != "") {
                         $.post(karlsruheURL, {module: app, command: action, params: [{name: "volume", "value": volume}]});
                     }
                 }
             }
-            
+
             function sendConverter(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var number = data.result.parameters.number;
                 var unitFrom = data.result.parameters.unitFrom;
                 var unitTo = data.result.parameters.unitTo;
-                if(action == "doConverter") {
-                    if(number != "" && unitFrom != "" && unitTo != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number},{name: "unitFrom", "value": unitFrom},{name: "unitTo", "value": unitTo}]});                        
+                if (action == "doConverter") {
+                    if (number != "" && unitFrom != "" && unitTo != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "unitFrom", "value": unitFrom}, {name: "unitTo", "value": unitTo}]});
                     }
                 }
-                if(action == "showConverter") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": app}]});                        
-                    
+                if (action == "showConverter") {
+                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": app}]});
+
                 }
             }
- 
+
             function sendTranslate(data) {
                 var app = data.result.parameters.app.toLowerCase();
-                var action = data.result.action; 
+                var action = data.result.action;
                 var text = data.result.parameters.text;
                 var langFrom = data.result.parameters.languageFrom;
                 var langTo = data.result.parameters.languageTo;
-                if(action == "doTranslate") {
-                    if(number != "" && langFrom != "" && langTo != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text},{name: "langFrom", "value": langFrom},{name: "langTo", "value": langTo}]});                        
+                if (action == "doTranslate") {
+                    if (text != "" && langFrom != "" && langTo != "") {
+                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "langFrom", "value": langFrom}, {name: "langTo", "value": langTo}]});
                     }
                 }
             }
-            
-            recognition.start();
         </script>
         <style type="text/css">
+            /* 
+            Using Calibri Light font file, looks nice and clean and modern
+            */
             @font-face {
                 font-family: normalFont;
                 src: url(CalibriL.ttf);
@@ -530,26 +518,15 @@
             body {
                 text-align: center;
                 margin-top: 40px;
-
             }
             #input {
                 background-color: #fff;
                 border: 2px #fff solid;
-				width: 90%;
-				margin: 0 auto;
+                width: 90%;
+                margin: 0 auto;
                 outline: none;
                 font-size: 25px;
                 text-align: center;
-            }
-            textarea {
-                background-color: #fff;
-                border: 1px #8c8c8c solid;
-                height: 750px;
-                width: calc(100% - 25px);
-                outline: none;
-                padding: 10px;
-                font-size: medium;
-                display:none;
             }
             marquee {
                 width:200px;
@@ -561,11 +538,15 @@
     </head>
 
     <body>
-		<div style="width:100%" >
-			<div id="input"></div>
-			<marquee scrollamount="8" behavior="alternate"><img src="dots.png"></marquee>
-		</div>
-        <textarea id="response"></textarea> 
+        <!-- 
+            On screen display. Nothing will show until 'Mirror mirror has been said'. 
+            Once said. listening, and an animated image are displayed, then with the dictated text on screen. 
+            When command complete, screen will turn black again.
+        -->
+        <div style="width:100%" >
+            <div id="input"></div>
+            <marquee scrollamount="8" behavior="alternate"><img alt="listeningImage" src="dots.png"></marquee>
+        </div> 
     </body>
 
 </html>
