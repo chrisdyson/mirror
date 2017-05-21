@@ -72,7 +72,7 @@
             var mirrorMirrorBeenSaid = false;
             
             //mirror api URL
-            var karlsruheURL = "http://de.macknet.eu:8000/fire-event";
+            var mirrorAPI_URL = "http://de.macknet.eu:8000/fire-event";
             
             //api.ai api keys/ sending & getting data
             var accessToken = "951c47c9f31c467f8871e0723d8545a1";
@@ -164,22 +164,22 @@
                     //Determine further which command is being called. Different commands will handle different data.
                     if (repeat == "" && date == "") {
                         //Send data to mirror api in JSON form
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "time", "value": time}]});
                     } else if (date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "repeat", "value": repeat}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "repeat", "value": repeat}]});
                     } else if (repeat == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "time", "value": time}, {name: "date", "value": date}]});
                     }
                 } else if (action == "editAlarm") {
                     if (date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}]});
                     } else {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "time", "value": time}, {name: "date", "value": date}]});
                     }
                 } else if (action == "showAlarm") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "date", "value": date}]});
                 } else if (action == "deleteAlarm") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}]});
                 }
             }
 
@@ -190,13 +190,13 @@
                 var date = data.result.parameters.date;
                 var period = data.result.parameters.period;
                 if (month == "" && date == "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "Calendar"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "Calendar"}]});
                 } else if (month != "" && date == "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": month}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": month}]});
                 } else if (month == "" && date != "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": date}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": date}]});
                 } else if (month == "" && date == "" && period != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": period}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": period}]});
                 }
             }
 
@@ -210,17 +210,17 @@
                 var givenCompany = data.result.parameters.senderCompany;
 
                 if (date == "" && period == "" && type == "" && givenName == "" && givenCompany == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}]});
                 } else if (date != "" && period == "" && type == "" && givenName == "" && givenCompany == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "date", "value": date}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "date", "value": date}]});
                 } else if (date == "" && period != "" && type == "" && givenName == "" && givenCompany == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "period", "value": period}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "period", "value": period}]});
                 } else if (date == "" && period == "" && type != "" && givenName == "" && givenCompany == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "type", "value": type}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "type", "value": type}]});
                 } else if (date == "" && period == "" && type == "" && givenName != "" && givenCompany == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromPerson", "value": givenName}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromPerson", "value": givenName}]});
                 } else if (date == "" && period == "" && type == "" && givenName == "" && givenCompany != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "view", "value": "All"}, {name: "fromCompany", "value": givenCompany}]});
                 }
             }
 
@@ -232,15 +232,15 @@
                 var period = data.result.parameters.period;
 
                 if (date != "" && location != "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "date", "value": date}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "date", "value": date}]});
                 } else if (period != "" && location != "" && date == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "period", "value": period}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": location}, {name: "period", "value": period}]});
                 } else if (location != "" && date == "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": location}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": location}]});
                 } else if (date != "" && location == "" && period == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "date", "value": date}]});
                 } else if (period != "" && date == "" && location == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "period", "value": period}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "period", "value": period}]});
                 }
             }
 
@@ -258,27 +258,27 @@
 				
                 if (action == "setMap") {
                     if (name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": name}]});
                     }
                 }
                 if (action == "showMap") {
                     if (city == "" && country == "" && continent == "" && address == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": "map"}]});
                     } else if (city != "" && country == "" && continent == "" && address == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": city}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": city}]});
                     } else if (city == "" && country != "" && continent == "" && address == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": country}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": country}]});
                     } else if (city == "" && country == "" && continent != "" && address == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": continent}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": continent}]});
                     } else if (address != "" && city == "" && country == "" && continent == "") {
-						$.post(karlsruheURL, {module: app, command: action, params: [{name: "location", "value": address}]});
+						$.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "location", "value": address}]});
 					}
                 }
                 if (action == "distanceMap") {
 					if (geocity != "" && geocity1 == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}]});
                     } else if (geocity != "" && geocity1 != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}, {name: "distanceFrom", "value": geocity1}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "distanceTo", "value": geocity}, {name: "distanceFrom", "value": geocity1}]});
                     }
                 }
             }
@@ -290,7 +290,7 @@
                 var number1 = data.result.parameters.number1;
                 var calculation = data.result.parameters.calculation;
                 if (number != "" && number1 != "" && calculation != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}, {name: "calculation", "value": calculation}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "number1", "value": number1}, {name: "calculation", "value": calculation}]});
                 }
             }
 
@@ -301,13 +301,13 @@
 
                 if (action == "addNews") {
                     if (source != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "add", "value": source}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "add", "value": source}]});
                     }
                 } else if (action == "showNews") {
                     if (source == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "show", "value": "all"}]});
                     } else if (source != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": source}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "show", "value": source}]});
                     }
                 }
             }
@@ -317,16 +317,16 @@
                 var action = data.result.action;
                 var city = data.result.parameters.city;
                 if (city == "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "time", "value": "Time"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "time", "value": "Time"}]});
                 } else if (city != "") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "city", "value": city}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "city", "value": city}]});
                 }
             }
 
             function sendMOTD(data) {
                 var app = data.result.parameters.app.toLowerCase();
                 var action = data.result.action;
-                $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
+                $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "view"}]});
             }
 
             function sendList(data) {
@@ -338,27 +338,27 @@
 
                 if (action == "addList") {
                     if (item != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
                     }
                 } else if (action == "createList") {
                     if (name != "" && item == "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (item != "" && name != "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "item", "value": item}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "item", "value": item}]});
                     } else if (item != "" && date != "" && name == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "item", "value": item}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "item", "value": item}]});
                     }
                 } else if (action == "deleteList") {
                     if (name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "delete", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "delete", "value": name}]});
                     }
                 } else if (action == "removeList") {
                     if (item != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "item", "value": item}, {name: "name", "value": name}]});
                     }
                 } else if (action == "showList") {
                     if (name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "show", "value": name}]});
                     }
                 }
             }
@@ -373,28 +373,28 @@
 
                 if (action == "addNote") {
                     if (text != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
                     }
                 } else if (action == "createNote") {
                     if (name != "" && text == "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (text != "" && name != "" && date == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "text", "value": text}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "name", "value": name}, {name: "text", "value": text}]});
                     } else if (text != "" && date != "" && name == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "text", "value": text}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "date", "value": date}, {name: "text", "value": text}]});
                     }
                 } else if (action == "deleteNote") {
                     if (name != "" && number == "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "name", "value": name}]});
                     } else if (name == "" && number != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}]});
                     }
                 } else if (action == "removeNote") {
                     if (text != "" && name != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "name", "value": name}]});
                     }
                 } else if (action == "showNote") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": "All"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "show", "value": "All"}]});
                 }
             }
 
@@ -408,42 +408,42 @@
                 var playlist = data.result.parameters.playlist;
                 if (action == "playMusic") {
                     if (album != "" && artist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}, {name: "artist", "value": artist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "album", "value": album}, {name: "artist", "value": artist}]});
                     } else if (genre != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
                     } else if (artist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
                     } else if (artist != "" && genre != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "play"}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "play"}]});
                     }
 
                 } else if (action == "nextMusic") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "next"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "next"}]});
                 } else if (action == "previousMusic") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "previous"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "previous"}]});
                 } else if (action == "loopMusic") {
                     if (song != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "song", "value": song}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "song", "value": song}]});
                     } else if (album != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "album", "value": album}]});
                     } else if (artist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
                     } else if (playlist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
                     }
                 } else if (action == "shuffleMusic") {
                     if (artist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "artist", "value": artist}]});
                     } else if (genre != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "genre", "value": genre}]});
                     } else if (album != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "album", "value": album}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "album", "value": album}]});
                     } else if (playlist != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "playlist", "value": playlist}]});
                     }
 
                 } else if (action == "pauseMusic") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
                 }
             }
 
@@ -453,11 +453,11 @@
                 var unit = data.result.parameters.duration.unit;
                 var value = data.result.parameters.duration.amount;
                 if (action == "setTimer") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "duration", "value": value},{name: "unit", "value": unit}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "duration", "value": value},{name: "unit", "value": unit}]});
                 } else if (action == "pauseTimer") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "pause"}]});
                 } else if (action == "stopTimer") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "action", "value": "stop"}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "action", "value": "stop"}]});
                 }
             }
 
@@ -468,9 +468,9 @@
                 var volume = data.result.parameters.volume;
                 if (action == "editVolume") {
                     if (percentage != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "percentage", "value": percentage}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "percentage", "value": percentage}]});
                     } else if (volume != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "volume", "value": volume}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "volume", "value": volume}]});
                     }
                 }
             }
@@ -483,11 +483,11 @@
                 var unitTo = data.result.parameters.unitTo;
                 if (action == "doConverter") {
                     if (number != "" && unitFrom != "" && unitTo != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "unitFrom", "value": unitFrom}, {name: "unitTo", "value": unitTo}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "number", "value": number}, {name: "unitFrom", "value": unitFrom}, {name: "unitTo", "value": unitTo}]});
                     }
                 }
                 if (action == "showConverter") {
-                    $.post(karlsruheURL, {module: app, command: action, params: [{name: "show", "value": app}]});
+                    $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "show", "value": app}]});
 
                 }
             }
@@ -500,7 +500,7 @@
                 var langTo = data.result.parameters.languageTo;
                 if (action == "doTranslate") {
                     if (text != "" && langFrom != "" && langTo != "") {
-                        $.post(karlsruheURL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "langFrom", "value": langFrom}, {name: "langTo", "value": langTo}]});
+                        $.post(mirrorAPI_URL, {module: app, command: action, params: [{name: "text", "value": text}, {name: "langFrom", "value": langFrom}, {name: "langTo", "value": langTo}]});
                     }
                 }
             }
